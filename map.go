@@ -7,7 +7,7 @@ import (
 )
 
 type CoarseMap[K comparable, V any] struct {
-	sync.RWMutex
+	mu      sync.RWMutex
 	element map[K]V
 }
 
@@ -20,16 +20,16 @@ func NewCoarseMap[K comparable, V any](capacity int) *CoarseMap[K, V] {
 }
 
 func (this *CoarseMap[K, V]) Set(key K, value V) error {
-	this.Lock()
+	this.mu.Lock()
 	this.element[key] = value
-	this.Unlock()
+	this.mu.Unlock()
 	return nil
 }
 
 func (this *CoarseMap[K, V]) Get(key K) (V, error) {
-	this.RLock()
+	this.mu.RLock()
 	value, ok := this.element[key]
-	this.RUnlock()
+	this.mu.RUnlock()
 	if !ok {
 		return value, ErrMapNotFound
 	}
@@ -37,32 +37,32 @@ func (this *CoarseMap[K, V]) Get(key K) (V, error) {
 }
 
 func (this *CoarseMap[K, V]) Delete(key K) error {
-	this.Lock()
+	this.mu.Lock()
 	delete(this.element, key)
-	this.Unlock()
+	this.mu.Unlock()
 	return nil
 }
 
 func (this *CoarseMap[K, V]) ForEach(yield func(K, V) bool) {
-	this.RLock()
+	this.mu.RLock()
 	for key, value := range this.element {
 		if !yield(key, value) {
 			break
 		}
 	}
 
-	this.RUnlock()
+	this.mu.RUnlock()
 }
 
 func (this *CoarseMap[K, V]) All() iter.Seq2[K, V] {
 	return func(yield func(K, V) bool) {
-		this.RLock()
+		this.mu.RLock()
 		for key, value := range this.element {
 			if !yield(key, value) {
 				break
 			}
 		}
 
-		this.RUnlock()
+		this.mu.RUnlock()
 	}
 }
