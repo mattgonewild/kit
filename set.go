@@ -3,6 +3,7 @@ package kit
 import (
 	"errors"
 	"iter"
+	"sync"
 
 	"github.com/mattgonewild/common"
 	"github.com/mattgonewild/kit/internal/help"
@@ -74,6 +75,82 @@ var (
 )
 
 // TODO: complete me
+
+type CoarseSortedSet7[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet7[T]
+}
+
+func NewCoarseSortedSet7[T common.Comparable[T]]() *CoarseSortedSet7[T] {
+	set := new(CoarseSortedSet7[T])
+
+	InitLowfiFreelist7(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist1(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet7[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet7.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet7[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet7.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet7[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet7.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet7[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet7.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet7[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
 
 type SortedSet7[T common.Comparable[T]] struct {
 	length     int
@@ -581,6 +658,82 @@ func (this *SortedSet7[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet8[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet8[T]
+}
+
+func NewCoarseSortedSet8[T common.Comparable[T]]() *CoarseSortedSet8[T] {
+	set := new(CoarseSortedSet8[T])
+
+	InitLowfiFreelist8(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist2(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet8[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet8.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet8[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet8.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet8[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet8.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet8[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet8.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet8[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
@@ -1093,6 +1246,82 @@ func (this *SortedSet8[T]) All() iter.Seq[T] {
 	}
 }
 
+type CoarseSortedSet9[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet9[T]
+}
+
+func NewCoarseSortedSet9[T common.Comparable[T]]() *CoarseSortedSet9[T] {
+	set := new(CoarseSortedSet9[T])
+
+	InitLowfiFreelist9(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist3(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet9[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet9.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet9[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet9.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet9[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet9.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet9[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet9.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet9[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
+
 type SortedSet9[T common.Comparable[T]] struct {
 	length     int
 	maxima     [help.L3]int
@@ -1599,6 +1828,82 @@ func (this *SortedSet9[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet10[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet10[T]
+}
+
+func NewCoarseSortedSet10[T common.Comparable[T]]() *CoarseSortedSet10[T] {
+	set := new(CoarseSortedSet10[T])
+
+	InitLowfiFreelist10(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist4(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet10[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet10.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet10[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet10.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet10[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet10.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet10[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet10.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet10[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
@@ -2111,6 +2416,82 @@ func (this *SortedSet10[T]) All() iter.Seq[T] {
 	}
 }
 
+type CoarseSortedSet11[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet11[T]
+}
+
+func NewCoarseSortedSet11[T common.Comparable[T]]() *CoarseSortedSet11[T] {
+	set := new(CoarseSortedSet11[T])
+
+	InitLowfiFreelist11(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist5(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet11[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet11.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet11[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet11.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet11[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet11.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet11[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet11.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet11[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
+
 type SortedSet11[T common.Comparable[T]] struct {
 	length     int
 	maxima     [help.L5]int
@@ -2617,6 +2998,82 @@ func (this *SortedSet11[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet12[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet12[T]
+}
+
+func NewCoarseSortedSet12[T common.Comparable[T]]() *CoarseSortedSet12[T] {
+	set := new(CoarseSortedSet12[T])
+
+	InitLowfiFreelist12(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist6(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet12[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet12.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet12[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet12.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet12[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet12.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet12[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet12.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet12[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
@@ -3129,6 +3586,82 @@ func (this *SortedSet12[T]) All() iter.Seq[T] {
 	}
 }
 
+type CoarseSortedSet13[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet13[T]
+}
+
+func NewCoarseSortedSet13[T common.Comparable[T]]() *CoarseSortedSet13[T] {
+	set := new(CoarseSortedSet13[T])
+
+	InitLowfiFreelist13(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist7(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet13[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet13.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet13[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet13.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet13[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet13.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet13[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet13.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet13[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
+
 type SortedSet13[T common.Comparable[T]] struct {
 	length     int
 	maxima     [help.L7]int
@@ -3635,6 +4168,82 @@ func (this *SortedSet13[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet14[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet14[T]
+}
+
+func NewCoarseSortedSet14[T common.Comparable[T]]() *CoarseSortedSet14[T] {
+	set := new(CoarseSortedSet14[T])
+
+	InitLowfiFreelist14(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist8(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet14[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet14.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet14[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet14.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet14[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet14.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet14[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet14.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet14[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
@@ -4147,6 +4756,82 @@ func (this *SortedSet14[T]) All() iter.Seq[T] {
 	}
 }
 
+type CoarseSortedSet15[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet15[T]
+}
+
+func NewCoarseSortedSet15[T common.Comparable[T]]() *CoarseSortedSet15[T] {
+	set := new(CoarseSortedSet15[T])
+
+	InitLowfiFreelist15(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist9(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet15[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet15.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet15[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet15.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet15[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet15.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet15[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet15.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet15[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
+
 type SortedSet15[T common.Comparable[T]] struct {
 	length     int
 	maxima     [help.L9]int
@@ -4653,6 +5338,82 @@ func (this *SortedSet15[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet16[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet16[T]
+}
+
+func NewCoarseSortedSet16[T common.Comparable[T]]() *CoarseSortedSet16[T] {
+	set := new(CoarseSortedSet16[T])
+
+	InitLowfiFreelist16(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist10(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet16[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet16.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet16[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet16.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet16[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet16.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet16[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet16.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet16[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
@@ -5165,6 +5926,82 @@ func (this *SortedSet16[T]) All() iter.Seq[T] {
 	}
 }
 
+type CoarseSortedSet17[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet17[T]
+}
+
+func NewCoarseSortedSet17[T common.Comparable[T]]() *CoarseSortedSet17[T] {
+	set := new(CoarseSortedSet17[T])
+
+	InitLowfiFreelist17(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist11(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet17[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet17.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet17[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet17.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet17[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet17.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet17[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet17.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet17[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
+
 type SortedSet17[T common.Comparable[T]] struct {
 	length     int
 	maxima     [help.L11]int
@@ -5671,6 +6508,82 @@ func (this *SortedSet17[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet18[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet18[T]
+}
+
+func NewCoarseSortedSet18[T common.Comparable[T]]() *CoarseSortedSet18[T] {
+	set := new(CoarseSortedSet18[T])
+
+	InitLowfiFreelist18(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist12(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet18[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet18.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet18[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet18.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet18[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet18.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet18[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet18.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet18[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
@@ -6183,6 +7096,82 @@ func (this *SortedSet18[T]) All() iter.Seq[T] {
 	}
 }
 
+type CoarseSortedSet19[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet19[T]
+}
+
+func NewCoarseSortedSet19[T common.Comparable[T]]() *CoarseSortedSet19[T] {
+	set := new(CoarseSortedSet19[T])
+
+	InitLowfiFreelist19(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist13(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet19[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet19.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet19[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet19.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet19[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet19.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet19[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet19.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet19[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
+
 type SortedSet19[T common.Comparable[T]] struct {
 	length     int
 	maxima     [help.L13]int
@@ -6689,6 +7678,82 @@ func (this *SortedSet19[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet20[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet20[T]
+}
+
+func NewCoarseSortedSet20[T common.Comparable[T]]() *CoarseSortedSet20[T] {
+	set := new(CoarseSortedSet20[T])
+
+	InitLowfiFreelist20(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist14(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet20[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet20.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet20[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet20.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet20[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet20.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet20[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet20.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet20[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
@@ -7201,6 +8266,82 @@ func (this *SortedSet20[T]) All() iter.Seq[T] {
 	}
 }
 
+type CoarseSortedSet21[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet21[T]
+}
+
+func NewCoarseSortedSet21[T common.Comparable[T]]() *CoarseSortedSet21[T] {
+	set := new(CoarseSortedSet21[T])
+
+	InitLowfiFreelist21(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist15(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet21[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet21.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet21[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet21.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet21[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet21.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet21[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet21.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet21[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
+
 type SortedSet21[T common.Comparable[T]] struct {
 	length     int
 	maxima     [help.L15]int
@@ -7707,6 +8848,82 @@ func (this *SortedSet21[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet22[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet22[T]
+}
+
+func NewCoarseSortedSet22[T common.Comparable[T]]() *CoarseSortedSet22[T] {
+	set := new(CoarseSortedSet22[T])
+
+	InitLowfiFreelist22(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist16(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet22[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet22.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet22[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet22.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet22[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet22.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet22[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet22.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet22[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
@@ -8219,6 +9436,82 @@ func (this *SortedSet22[T]) All() iter.Seq[T] {
 	}
 }
 
+type CoarseSortedSet23[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet23[T]
+}
+
+func NewCoarseSortedSet23[T common.Comparable[T]]() *CoarseSortedSet23[T] {
+	set := new(CoarseSortedSet23[T])
+
+	InitLowfiFreelist23(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist17(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet23[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet23.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet23[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet23.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet23[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet23.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet23[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet23.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet23[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
+
 type SortedSet23[T common.Comparable[T]] struct {
 	length     int
 	maxima     [help.L17]int
@@ -8725,6 +10018,82 @@ func (this *SortedSet23[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet24[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet24[T]
+}
+
+func NewCoarseSortedSet24[T common.Comparable[T]]() *CoarseSortedSet24[T] {
+	set := new(CoarseSortedSet24[T])
+
+	InitLowfiFreelist24(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist18(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet24[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet24.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet24[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet24.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet24[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet24.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet24[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet24.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet24[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
@@ -9237,6 +10606,82 @@ func (this *SortedSet24[T]) All() iter.Seq[T] {
 	}
 }
 
+type CoarseSortedSet25[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet25[T]
+}
+
+func NewCoarseSortedSet25[T common.Comparable[T]]() *CoarseSortedSet25[T] {
+	set := new(CoarseSortedSet25[T])
+
+	InitLowfiFreelist25(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist19(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet25[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet25.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet25[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet25.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet25[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet25.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet25[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet25.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet25[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
+
 type SortedSet25[T common.Comparable[T]] struct {
 	length     int
 	maxima     [help.L19]int
@@ -9743,6 +11188,82 @@ func (this *SortedSet25[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet26[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet26[T]
+}
+
+func NewCoarseSortedSet26[T common.Comparable[T]]() *CoarseSortedSet26[T] {
+	set := new(CoarseSortedSet26[T])
+
+	InitLowfiFreelist26(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist20(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet26[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet26.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet26[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet26.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet26[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet26.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet26[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet26.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet26[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
@@ -10255,6 +11776,82 @@ func (this *SortedSet26[T]) All() iter.Seq[T] {
 	}
 }
 
+type CoarseSortedSet27[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet27[T]
+}
+
+func NewCoarseSortedSet27[T common.Comparable[T]]() *CoarseSortedSet27[T] {
+	set := new(CoarseSortedSet27[T])
+
+	InitLowfiFreelist27(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist21(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet27[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet27.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet27[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet27.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet27[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet27.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet27[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet27.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet27[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
+
 type SortedSet27[T common.Comparable[T]] struct {
 	length     int
 	maxima     [help.L21]int
@@ -10761,6 +12358,82 @@ func (this *SortedSet27[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet28[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet28[T]
+}
+
+func NewCoarseSortedSet28[T common.Comparable[T]]() *CoarseSortedSet28[T] {
+	set := new(CoarseSortedSet28[T])
+
+	InitLowfiFreelist28(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist22(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet28[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet28.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet28[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet28.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet28[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet28.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet28[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet28.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet28[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
@@ -11273,6 +12946,82 @@ func (this *SortedSet28[T]) All() iter.Seq[T] {
 	}
 }
 
+type CoarseSortedSet29[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet29[T]
+}
+
+func NewCoarseSortedSet29[T common.Comparable[T]]() *CoarseSortedSet29[T] {
+	set := new(CoarseSortedSet29[T])
+
+	InitLowfiFreelist29(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist23(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet29[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet29.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet29[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet29.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet29[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet29.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet29[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet29.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet29[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
+
 type SortedSet29[T common.Comparable[T]] struct {
 	length     int
 	maxima     [help.L23]int
@@ -11779,6 +13528,82 @@ func (this *SortedSet29[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet30[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet30[T]
+}
+
+func NewCoarseSortedSet30[T common.Comparable[T]]() *CoarseSortedSet30[T] {
+	set := new(CoarseSortedSet30[T])
+
+	InitLowfiFreelist30(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist24(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet30[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet30.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet30[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet30.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet30[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet30.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet30[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet30.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet30[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
@@ -12291,6 +14116,82 @@ func (this *SortedSet30[T]) All() iter.Seq[T] {
 	}
 }
 
+type CoarseSortedSet31[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet31[T]
+}
+
+func NewCoarseSortedSet31[T common.Comparable[T]]() *CoarseSortedSet31[T] {
+	set := new(CoarseSortedSet31[T])
+
+	InitLowfiFreelist31(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist25(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet31[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet31.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet31[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet31.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet31[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet31.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet31[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet31.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet31[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
+
 type SortedSet31[T common.Comparable[T]] struct {
 	length     int
 	maxima     [help.L25]int
@@ -12797,6 +14698,82 @@ func (this *SortedSet31[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet32[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet32[T]
+}
+
+func NewCoarseSortedSet32[T common.Comparable[T]]() *CoarseSortedSet32[T] {
+	set := new(CoarseSortedSet32[T])
+
+	InitLowfiFreelist32(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist26(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet32[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet32.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet32[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet32.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet32[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet32.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet32[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet32.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet32[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
@@ -13309,6 +15286,82 @@ func (this *SortedSet32[T]) All() iter.Seq[T] {
 	}
 }
 
+type CoarseSortedSet33[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet33[T]
+}
+
+func NewCoarseSortedSet33[T common.Comparable[T]]() *CoarseSortedSet33[T] {
+	set := new(CoarseSortedSet33[T])
+
+	InitLowfiFreelist33(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist27(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet33[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet33.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet33[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet33.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet33[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet33.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet33[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet33.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet33[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
+	}
+}
+
 type SortedSet33[T common.Comparable[T]] struct {
 	length     int
 	maxima     [help.L27]int
@@ -13815,6 +15868,82 @@ func (this *SortedSet33[T]) All() iter.Seq[T] {
 
 			node = node.next
 		}
+	}
+}
+
+type CoarseSortedSet34[T common.Comparable[T]] struct {
+	mu sync.RWMutex
+	SortedSet34[T]
+}
+
+func NewCoarseSortedSet34[T common.Comparable[T]]() *CoarseSortedSet34[T] {
+	set := new(CoarseSortedSet34[T])
+
+	InitLowfiFreelist34(&set.free, func(index uint) uint {
+		return index
+	})
+
+	InitLowfiFreelist28(&set.arena, func(index uint) doublyLinkedIndexCache {
+		return doublyLinkedIndexCache{id: index}
+	})
+
+	return set
+}
+
+func (this *CoarseSortedSet34[T]) Put(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet34.Put(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet34[T]) Get(element T) (T, error) {
+	this.mu.RLock()
+	element, err := this.SortedSet34.Get(element)
+	this.mu.RUnlock()
+	return element, err
+}
+
+func (this *CoarseSortedSet34[T]) Delete(element T) error {
+	this.mu.Lock()
+	err := this.SortedSet34.Delete(element)
+	this.mu.Unlock()
+	return err
+}
+
+func (this *CoarseSortedSet34[T]) ForEach(yield func(T) bool) {
+	this.mu.RLock()
+	this.SortedSet34.ForEach(yield)
+	this.mu.RUnlock()
+}
+
+func (this *CoarseSortedSet34[T]) All() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		this.mu.RLock()
+
+		if this.length == help.ZeroInt {
+			this.mu.RUnlock()
+			return
+		}
+
+		var (
+			eb   = &this.element[help.ZeroInt]
+			node = this.indexCache[help.ZeroInt]
+		)
+
+		for node != nil {
+			nb := &node.index[help.ZeroInt]
+			for index := range node.length {
+				if !yield(*help.GetPtr(eb, *help.GetPtr(nb, index))) {
+					this.mu.RUnlock()
+					return
+				}
+			}
+
+			node = node.next
+		}
+
+		this.mu.RUnlock()
 	}
 }
 
