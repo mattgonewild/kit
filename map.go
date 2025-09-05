@@ -19,6 +19,10 @@ func NewCoarseMap[K comparable, V any](capacity int) *CoarseMap[K, V] {
 	}
 }
 
+func InitCoarseMap[K comparable, V any](m *CoarseMap[K, V], capacity int) {
+	m.element = make(map[K]V, capacity)
+}
+
 func (this *CoarseMap[K, V]) Set(key K, value V) error {
 	this.mu.Lock()
 	this.element[key] = value
