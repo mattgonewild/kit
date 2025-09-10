@@ -10,6 +10,8 @@ import (
 	"github.com/mattgonewild/kit/internal/help"
 )
 
+func NewLogAs() bool { return true }
+
 type linkedSegBucket[T common.UnixTimestamped] struct {
 	element []T
 
@@ -328,7 +330,7 @@ type slidingLog[T common.UnixTimestamped] struct {
 }
 
 // TODO: element timestamps must be > than logWindow; bucket's element caps must remain constant
-func New[T common.UnixTimestamped](stepWindow, retention time.Duration, capPerLinkedNode int) common.Log[T] {
+func NewLog[T common.UnixTimestamped](stepWindow, retention time.Duration, capPerLinkedNode int) common.Log[T] {
 	var (
 		stepNano      = uint(stepWindow.Nanoseconds())
 		retentionNano = uint(retention.Nanoseconds())

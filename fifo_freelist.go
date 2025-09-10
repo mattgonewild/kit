@@ -2,6 +2,8 @@ package kit
 
 import "github.com/mattgonewild/kit/internal/help"
 
+func NewFifoAs() bool { return true }
+
 type FifoFreelist0[T any] struct {
 	element [help.L0]T
 	queue   [help.L0]uint

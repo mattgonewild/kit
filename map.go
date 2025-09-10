@@ -6,6 +6,8 @@ import (
 	"sync"
 )
 
+func NewMapAs() bool { return true }
+
 type CoarseMap[K comparable, V any] struct {
 	mu      sync.RWMutex
 	element map[K]V

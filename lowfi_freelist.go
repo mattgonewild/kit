@@ -6,6 +6,8 @@ import (
 	"github.com/mattgonewild/kit/internal/help"
 )
 
+func NewLowfiAs() bool { return true }
+
 type LowfiFreelist0[T any] struct {
 	bitmap  uint
 	element [help.L0]T

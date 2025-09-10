@@ -9,6 +9,8 @@ import (
 	"github.com/mattgonewild/kit/internal/help"
 )
 
+func NewSetAs() bool { return true }
+
 type doublyLinkedIndexCache struct {
 	previous     *doublyLinkedIndexCache
 	next         *doublyLinkedIndexCache

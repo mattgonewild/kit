@@ -6,6 +6,8 @@ import (
 	"sync"
 )
 
+func NewRegistryAs() bool { return true }
+
 type registryEntry[V any] struct {
 	claimed bool
 	value   V

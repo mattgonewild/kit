@@ -4,6 +4,8 @@ import (
 	"github.com/mattgonewild/kit/internal/help"
 )
 
+func NewLifoAs() bool { return true }
+
 type LifoFreelist0[T any] struct {
 	element [help.L0]T
 	stack   [help.L0]uint

@@ -6,6 +6,8 @@ import (
 	"github.com/mattgonewild/kit/internal/help"
 )
 
+func NewBiboAs() bool { return true }
+
 // TODO: complete me
 
 type BiboFreelist7[T any] struct {

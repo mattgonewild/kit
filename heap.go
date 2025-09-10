@@ -11,6 +11,8 @@ import (
 	"github.com/mattgonewild/kit/internal/help"
 )
 
+func NewHeapAs() bool { return true }
+
 type heapLowBitSet[T common.Standard[T, uint]] struct {
 	heap     []T
 	indexMap []int
