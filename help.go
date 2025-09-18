@@ -19,5 +19,6 @@ func Unpack16(array [help.SixteenInt]byte) (low, high uint64) {
 	return low, high
 }
 
-func UnixNano() int64         { return time.Now().UnixNano() }
-func BoolToInt(true bool) int { return help.BoolToInt(true) }
+func UnixNano() int64          { return time.Now().UnixNano() }
+func BoolToInt(true bool) int  { return help.BoolToInt(true) }
+func Close[T any](ch chan<- T) { close(ch) }
