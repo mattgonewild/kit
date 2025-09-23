@@ -42,6 +42,13 @@ func (this *CoarseMap[K, V]) Get(key K) (V, error) {
 	return value, nil
 }
 
+func (this *CoarseMap[K, V]) Has(key K) bool {
+	this.mu.RLock()
+	_, ok := this.element[key]
+	this.mu.RUnlock()
+	return ok
+}
+
 func (this *CoarseMap[K, V]) Delete(key K) error {
 	this.mu.Lock()
 	delete(this.element, key)
