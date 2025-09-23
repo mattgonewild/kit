@@ -53,6 +53,25 @@ func (this *CoarseRegistry[K, V]) Release(key K) bool {
 	return true
 }
 
+func (this *CoarseRegistry[K, V]) Claim(key K) bool {
+	this.mu.Lock()
+	entry, ok := this.entry[key]
+	if !ok {
+		this.mu.Unlock()
+		return false
+	}
+
+	if entry.claimed {
+		this.mu.Unlock()
+		return false
+	}
+
+	entry.claimed = true
+	this.entry[key] = entry
+	this.mu.Unlock()
+	return true
+}
+
 func (this *CoarseRegistry[K, V]) ClaimOrRegister(key K, new func() V) (V, bool) {
 	this.mu.Lock()
 	entry, ok := this.entry[key]
