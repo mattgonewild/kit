@@ -2,7 +2,6 @@ package kit
 
 import (
 	"errors"
-	"iter"
 	"sync"
 )
 
@@ -18,11 +17,7 @@ type CoarseRegistry[K comparable, V any] struct {
 	entry map[K]registryEntry[V]
 }
 
-var (
-	ErrRegistryConflict = errors.New("matt::kit::registry: key conflict")
-	ErrRegistryNotFound = errors.New("matt::kit::registry: not found")
-	ErrRegistryLocked   = errors.New("matt::kit::registry: locked")
-)
+var ErrRegistryNotFound = errors.New("matt::kit::registry: not found")
 
 func NewCoarseRegistry[K comparable, V any](capacity int) *CoarseRegistry[K, V] {
 	return &CoarseRegistry[K, V]{
@@ -32,47 +27,6 @@ func NewCoarseRegistry[K comparable, V any](capacity int) *CoarseRegistry[K, V] 
 
 func InitCoarseRegistry[K comparable, V any](registry *CoarseRegistry[K, V], capacity int) {
 	registry.entry = make(map[K]registryEntry[V], capacity)
-}
-
-func (this *CoarseRegistry[K, V]) Claim(key K) (V, bool) {
-	this.mu.Lock()
-	entry, ok := this.entry[key]
-	if !ok || entry.claimed {
-		this.mu.Unlock()
-		return entry.value, false
-	}
-
-	entry.claimed = true
-	this.entry[key] = entry
-	this.mu.Unlock()
-	return entry.value, true
-}
-
-func (this *CoarseRegistry[K, V]) Register(key K, value V) error {
-	this.mu.Lock()
-	_, ok := this.entry[key]
-	if ok {
-		this.mu.Unlock()
-		return ErrRegistryConflict
-	}
-
-	this.entry[key] = registryEntry[V]{claimed: true, value: value}
-	this.mu.Unlock()
-	return nil
-}
-
-func (this *CoarseRegistry[K, V]) Release(key K) error {
-	this.mu.Lock()
-	entry, ok := this.entry[key]
-	if !ok {
-		this.mu.Unlock()
-		return ErrRegistryNotFound
-	}
-
-	entry.claimed = false
-	this.entry[key] = entry
-	this.mu.Unlock()
-	return nil
 }
 
 func (this *CoarseRegistry[K, V]) Get(key K) (V, error) {
@@ -85,44 +39,37 @@ func (this *CoarseRegistry[K, V]) Get(key K) (V, error) {
 	return entry.value, nil
 }
 
-func (this *CoarseRegistry[K, V]) Delete(key K) error {
+func (this *CoarseRegistry[K, V]) Release(key K) bool {
 	this.mu.Lock()
 	entry, ok := this.entry[key]
 	if !ok {
 		this.mu.Unlock()
-		return ErrRegistryNotFound
+		return false
+	}
+
+	entry.claimed = false
+	this.entry[key] = entry
+	this.mu.Unlock()
+	return true
+}
+
+func (this *CoarseRegistry[K, V]) ClaimOrRegister(key K, new func() V) (V, bool) {
+	this.mu.Lock()
+	entry, ok := this.entry[key]
+	if !ok {
+		entry = registryEntry[V]{claimed: true, value: new()}
+		this.entry[key] = entry
+		this.mu.Unlock()
+		return entry.value, true
 	}
 
 	if entry.claimed {
 		this.mu.Unlock()
-		return ErrRegistryLocked
+		return entry.value, false
 	}
 
-	delete(this.entry, key)
+	entry.claimed = true
+	this.entry[key] = entry
 	this.mu.Unlock()
-	return nil
-}
-
-func (this *CoarseRegistry[K, V]) ForEach(yield func(K, V) bool) {
-	this.mu.RLock()
-	for key, entry := range this.entry {
-		if !yield(key, entry.value) {
-			break
-		}
-	}
-
-	this.mu.RUnlock()
-}
-
-func (this *CoarseRegistry[K, V]) All() iter.Seq2[K, V] {
-	return func(yield func(K, V) bool) {
-		this.mu.RLock()
-		for key, entry := range this.entry {
-			if !yield(key, entry.value) {
-				break
-			}
-		}
-
-		this.mu.RUnlock()
-	}
+	return entry.value, true
 }
