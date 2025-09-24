@@ -1,7 +1,7 @@
 package kit
 
 import (
-	"github.com/mattgonewild/kit/internal/help"
+	"github.com/ringboundio/kit/internal/help"
 )
 
 func NewLifoAs() bool { return true }

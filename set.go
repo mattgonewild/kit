@@ -5,8 +5,8 @@ import (
 	"iter"
 	"sync"
 
-	"github.com/mattgonewild/common"
-	"github.com/mattgonewild/kit/internal/help"
+	"github.com/ringboundio/common"
+	"github.com/ringboundio/kit/internal/help"
 )
 
 func NewSetAs() bool { return true }

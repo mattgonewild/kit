@@ -7,8 +7,8 @@
 package kit
 
 import (
-	"github.com/mattgonewild/common"
-	"github.com/mattgonewild/kit/internal/help"
+	"github.com/ringboundio/common"
+	"github.com/ringboundio/kit/internal/help"
 )
 
 func NewHeapAs() bool { return true }

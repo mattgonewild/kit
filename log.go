@@ -6,8 +6,8 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/mattgonewild/common"
-	"github.com/mattgonewild/kit/internal/help"
+	"github.com/ringboundio/common"
+	"github.com/ringboundio/kit/internal/help"
 )
 
 func NewLogAs() bool { return true }

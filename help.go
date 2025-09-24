@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"time"
 
-	"github.com/mattgonewild/kit/internal/help"
+	"github.com/ringboundio/kit/internal/help"
 )
 
 func Pack16(low, high uint64) (array [help.SixteenInt]byte) {

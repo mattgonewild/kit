@@ -3,7 +3,7 @@ package kit
 import (
 	"math/bits"
 
-	"github.com/mattgonewild/kit/internal/help"
+	"github.com/ringboundio/kit/internal/help"
 )
 
 func NewBiboAs() bool { return true }

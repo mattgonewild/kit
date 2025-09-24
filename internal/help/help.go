@@ -6,7 +6,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/mattgonewild/common"
+	"github.com/ringboundio/common"
 )
 
 func BoolToInt(true bool) int {

@@ -1,6 +1,6 @@
 package kit
 
-import "github.com/mattgonewild/kit/internal/help"
+import "github.com/ringboundio/kit/internal/help"
 
 func NewFifoAs() bool { return true }
 
