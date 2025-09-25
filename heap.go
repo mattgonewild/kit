@@ -190,3 +190,148 @@ func (this *heapLowBitSet[T]) getMapIndex(node T) int { return int(node.ID() & t
 
 func (this *heapLowBitSet[T]) Len() int { return this.length }
 func (this *heapLowBitSet[T]) Cap() int { return cap(this.heap) }
+
+type LeakyHeap[T common.Comparable[T]] struct {
+	heap [help.TenInt]T
+
+	length, poleIndex int
+}
+
+func (this *LeakyHeap[T]) Push(node T) {
+	var length = this.length
+	switch length {
+	case help.ZeroInt:
+		this.heap[help.ZeroInt] = node
+		this.length = help.OneInt
+		this.poleIndex = help.ZeroInt
+		return
+	case help.TenInt:
+		var pole = this.heap[this.poleIndex]
+		if pole.Equal(node) {
+			this.heap[this.poleIndex] = node
+			return
+		}
+
+		if !node.Before(pole) {
+			return
+		}
+	}
+
+	for index, current := range this.heap[:length] {
+		if current.Equal(node) {
+			this.heap[index] = node
+			return
+		}
+	}
+
+	if length < help.TenInt {
+		this.heap[length] = node
+		this.length++
+		this.siftUp(length)
+		this.updatePole()
+		return
+	}
+
+	this.heap[this.poleIndex] = node
+	this.fix(this.poleIndex)
+	this.updatePole()
+}
+
+func (this *LeakyHeap[T]) Peek() (T, bool) {
+	if this.length == help.ZeroInt {
+		return this.heap[help.ZeroInt], false
+	}
+
+	return this.heap[help.ZeroInt], true
+}
+
+func (this *LeakyHeap[T]) Remove(node T) {
+	if this.length == help.ZeroInt || this.heap[this.poleIndex].Before(node) {
+		return
+	}
+
+	for index, current := range this.heap[:this.length] {
+		if current.Equal(node) {
+			high := this.length - help.OneInt
+			if index == high {
+				this.length--
+				this.updatePole()
+				return
+			}
+
+			this.heap[index] = this.heap[high]
+			this.length--
+			this.fix(index)
+			this.updatePole()
+			return
+		}
+	}
+}
+
+func (this *LeakyHeap[T]) fix(index int) {
+	if !this.siftDown(index) {
+		this.siftUp(index)
+	}
+}
+
+func (this *LeakyHeap[T]) siftDown(index int) bool {
+	var (
+		nodeToSift = this.heap[index]
+		holeIndex  = index
+	)
+
+	for low := (holeIndex << help.OneUint) + help.OneInt; low < this.length; low = (holeIndex << help.OneUint) + help.OneInt {
+		var (
+			high         = low + help.OneInt
+			minNodeIndex = low
+		)
+
+		if high < this.length && this.heap[high].Before(this.heap[low]) {
+			minNodeIndex = high
+		}
+
+		if nodeToSift.Before(this.heap[minNodeIndex]) {
+			break
+		}
+
+		this.heap[holeIndex] = this.heap[minNodeIndex]
+		holeIndex = minNodeIndex
+	}
+
+	this.heap[holeIndex] = nodeToSift
+	return index != holeIndex
+}
+
+func (this *LeakyHeap[T]) siftUp(index int) {
+	var (
+		nodeToSift = this.heap[index]
+		holeIndex  = index
+	)
+
+	for holeIndex > help.ZeroInt {
+		parentIndex := (holeIndex - help.OneInt) >> help.OneUint
+		if this.heap[parentIndex].Before(nodeToSift) {
+			break
+		}
+
+		this.heap[holeIndex] = this.heap[parentIndex]
+
+		holeIndex = parentIndex
+	}
+
+	this.heap[holeIndex] = nodeToSift
+}
+
+func (this *LeakyHeap[T]) updatePole() {
+	var poleIndex int
+	for index, current := range this.heap[:this.length] {
+		if this.heap[poleIndex].Before(current) {
+			poleIndex = index
+		}
+	}
+
+	this.poleIndex = poleIndex
+}
+
+func (this *LeakyHeap[T]) Len() int { return this.length }
+func (this *LeakyHeap[T]) Cap() int { return help.TenInt }
