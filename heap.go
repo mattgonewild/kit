@@ -192,9 +192,9 @@ func (this *heapLowBitSet[T]) Len() int { return this.length }
 func (this *heapLowBitSet[T]) Cap() int { return cap(this.heap) }
 
 type LeakyHeap[T common.Comparable[T]] struct {
-	heap [help.TenInt]T
-
 	length, poleIndex int
+
+	heap [help.TenInt]T
 }
 
 func (this *LeakyHeap[T]) Push(node T) {
