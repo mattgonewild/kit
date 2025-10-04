@@ -1,5 +1,5 @@
 module github.com/ringboundio/kit
 
-go 1.25.0
+go 1.25.1
 
-require github.com/ringboundio/common v0.16.0
+require github.com/ringboundio/common v0.16.1
